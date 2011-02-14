@@ -7,7 +7,7 @@ from ftplib import FTP
 class FtpFileFinder(object):
     db = None
     ftp = None
-    curDirs = []
+    dirs = []
     dirname = ''
 
     def __init__(self):
@@ -24,8 +24,9 @@ class FtpFileFinder(object):
         self.db.sync()
 
     def findFile(self, filename):
-        if self.db.has_key(filename):
-            print self.db[filename]
+        for k,v in self.db.items():
+            if v.lower().find(filename) != -1:
+                print k
 
     def loadFromFile(self, archfile):
         self.db = anydbm.open(archfile.name, 'r')
@@ -36,8 +37,8 @@ class FtpFileFinder(object):
         self.ftp.cwd(self.dirname)
         self.ftp.retrlines('LIST', self.addFile)
 
-        while len(self.curDirs) > 1:
-            self.dirname = self.curDirs.pop()
+        while len(self.dirs) > 1:
+            self.dirname = self.dirs.pop()
             self.listDir()
 
     def addFile(self, line):
@@ -48,9 +49,9 @@ class FtpFileFinder(object):
         m = re.match('^d.*', line)
         if m!= None:
             if fname!='.' and fname!='..':
-                self.curDirs.append(absolute)
+                self.dirs.append(absolute)
         elif fname!='.' and fname!='..':
-            self.db[fname] = absolute
+            self.db[absolute] = fname
 
 def main():
     parser = argparse.ArgumentParser(description='Search remote FTP site for a file. If archive filename is specified the network connection is not used.')
