@@ -1,13 +1,12 @@
 import re
 import sys
+import anydbm
 import argparse
 from ftplib import FTP
-import cPickle as pickle
 
 class FtpFileFinder(object):
+    db = None
     ftp = None
-    dirs = []
-    files = []
     curDirs = []
     dirname = ''
 
@@ -15,28 +14,25 @@ class FtpFileFinder(object):
         super(FtpFileFinder, self).__init__()
 
     def openRemote(self, server, username, password):
+        self.db = anydbm.open(server + '.arch', 'n')
         self.ftp = FTP(server)
         self.ftp.login(username, password)
 
     def closeRemote(self):
         self.ftp.quit()
         self.ftp = None
+        self.db.sync()
 
     def findFile(self, filename):
-        for fname in self.files:
-            if fname.find(filename)!=-1:
-                print fname
+        if self.db.has_key(filename):
+            print self.db[filename]
 
-    def saveToFile(self, filename):
-        pickle.dump(self.files, open(filename, 'wb'))
-
-    def loadFromFile(self, filename):
-        self.files = pickle.load(open(filename, 'rb'))
+    def loadFromFile(self, archfile):
+        self.db = anydbm.open(archfile.name, 'r')
 
     def listDir(self, dirname=''):
         if len(dirname) > 0 and len(self.dirname) == 0:
             self.dirname = dirname
-        #print 'Listing dir ' + self.dirname
         self.ftp.cwd(self.dirname)
         self.ftp.retrlines('LIST', self.addFile)
 
@@ -47,13 +43,14 @@ class FtpFileFinder(object):
     def addFile(self, line):
         arr = line.split(' ')
         fname = arr[len(arr)-1]
+        absolute = self.dirname + '/' + fname
 
         m = re.match('^d.*', line)
         if m!= None:
             if fname!='.' and fname!='..':
-                self.curDirs.append(self.dirname + '/' + fname)
+                self.curDirs.append(absolute)
         elif fname!='.' and fname!='..':
-            self.files.append(self.dirname + '/' + fname)
+            self.db[fname] = absolute
 
 def main():
     parser = argparse.ArgumentParser(description='Search remote FTP site for a file. If archive filename is specified the network connection is not used.')
@@ -72,7 +69,6 @@ def main():
         fff.openRemote(args.server, args.user, args.pwd)
         fff.listDir(args.dir)
         fff.closeRemote()
-        fff.saveToFile(args.server+'.arch')
 
     if args.arch!=None:
         fff.loadFromFile(args.arch)
