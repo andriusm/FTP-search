@@ -53,6 +53,7 @@ be created so the search will be much master.
 Contacts
 --------
 
-URL: http://andrius.miasnikovas.lt
+URL: [Home page](http://andrius.miasnikovas.lt)
+
 Andrejus Miasnikovas <andriusms@gmail.com>
 
