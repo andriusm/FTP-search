@@ -1,8 +1,19 @@
+#!/usr/bin/env python
+"""
+This script helps you find files on a remote FTP server.
+It's also possible to search the cached version of the
+site with no network access.
+"""
+
 import re
 import sys
 import anydbm
 import argparse
 from ftplib import FTP
+
+__version__ = "0.1"
+__author__ = "Andrius Miasnikovas"
+__license__ = "psf"
 
 class FtpFileFinder(object):
     db = None
