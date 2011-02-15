@@ -1,7 +1,8 @@
 FTP search
 ==========
 
-* Overview
+Overview
+--------
 
 In short it's a script that allows one to search a specified FTP site for files.
 
@@ -11,7 +12,8 @@ is checked for the file in question. To conserve network bandwidth and cut down
 search time the file list is stored as a dbm file after the site crawling is
 done.
 
-* Invocation
+Invocation
+----------
 
 Usage: ftpsearch.py [-h] (-s SERVER | -a ARCH) [-u USER] [-p PWD] [-d DIR] filename
 
@@ -26,12 +28,11 @@ optional arguments:
   -a ARCH, --arch ARCH        Previously created archive file which contains the FTP site structure
   -u USER, --user USER        Username for the FTP site (default - anonymous)
   -p PWD, --pwd PWD           Password for the FTP site
-  -d DIR, --dir DIR           Remote directory that denotes the root of the search tree, location
-                              must be absolute (default - /)
+  -d DIR, --dir DIR           Remote directory that denotes the root of the search tree, location must be absolute (default - /)
 
 First run example:
 
-ftpsearch.py -s ftp.example.org -u myuser -p pwd123 -d /public/myweb index.html
+    ftpsearch.py -s ftp.example.org -u myuser -p pwd123 -d /public/myweb index.html
 
 This will connect to the server ftp.example.org using the account myuser and password pwd123,
 traverse the site starting at /public/myweb (remember that remote path must be absolute) and
@@ -43,13 +44,15 @@ else has updated the site.
 
 Subsequent run example:
 
-ftpsearch.py -a ftp.example.org.arch index.php
+    ftpsearch.py -a ftp.example.org.arch index.php
 
 This will open a local archive file ftp.example.org.arch (automatically named after the FTP
 server) and search for a file named index.php. In this scenario no network connections will
 be created so the search will be much master.
 
-* Contacts
+Contacts
+--------
 
 URL: http://andrius.miasnikovas.lt
 Andrejus Miasnikovas <andriusms@gmail.com>
+
